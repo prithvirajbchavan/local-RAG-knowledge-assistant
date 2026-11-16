@@ -2,6 +2,12 @@
 
 A small retrieval-augmented knowledge assistant that runs entirely in the browser. No backend, no API keys, and your documents never leave your machine.
 
+## What’s inside
+- Live pipeline view (ingest, chunk, index, retrieve, answer) with real timings
+- Three retrieval modes: keyword (BM25), semantic-style (character n-gram similarity with query expansion) and hybrid (reciprocal rank fusion)
+- Confidence rating, cited answers and a document map showing which passages were retrieved
+- Built-in evaluation panel: top-1 hit, top-3 hit and MRR across the three modes
+
 ## How it works
 1. **Ingest**: add text or `.txt` / `.md` files to the library.
 2. **Chunk**: documents are split on sentence boundaries into passages of a configurable length.

@@ -5,121 +5,166 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Recall · Local knowledge assistant</title>
 <style>
-:root{--bg:#F5F7FA;--surf:#fff;--ink:#1B2430;--mut:#66717F;--line:#E3E7EC;--acc:#2F6F6A;--acc-s:#E4F0EE;--hl:#FFEFB0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F141A;--surf:#161D25;--ink:#E6EAF0;--mut:#8D99A8;--line:#263039;--acc:#74C4BA;--acc-s:#1B2C2E;--hl:#4A4220;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0F141A;--surf:#161D25;--ink:#E6EAF0;--mut:#8D99A8;--line:#263039;--acc:#74C4BA;--acc-s:#1B2C2E;--hl:#4A4220;color-scheme:dark}
+:root{--bg:#F2F4FB;--surf:#fff;--ink:#151A2D;--mut:#62697F;--line:#E2E6F0;--a1:#4361EE;--a2:#14B8A6;--hl:#FFE98A;--sh:0 1px 2px rgba(21,26,45,.05),0 8px 24px rgba(21,26,45,.06);--glow:rgba(67,97,238,.10);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B0F1A;--surf:#121829;--ink:#E8ECF8;--mut:#8E98B3;--line:#222B42;--a1:#7C93FF;--a2:#3DD6C0;--hl:#5A4C12;--sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);--glow:rgba(124,147,255,.12);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B0F1A;--surf:#121829;--ink:#E8ECF8;--mut:#8E98B3;--line:#222B42;--a1:#7C93FF;--a2:#3DD6C0;--hl:#5A4C12;--sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);--glow:rgba(124,147,255,.12);color-scheme:dark}
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.wrap{max-width:1040px;margin:0 auto;padding:28px 20px 56px}
-header{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:28px}
-h1{font:600 22px/1.2 Georgia,"Times New Roman",serif;margin:0;letter-spacing:.2px}
-h1 small{font:400 14px system-ui,sans-serif;color:var(--mut);margin-left:10px}
-button,input,textarea{font:inherit;color:inherit}
-.ghost{background:none;border:1px solid var(--line);border-radius:8px;padding:5px 12px;color:var(--mut);cursor:pointer}
-.ghost:hover{color:var(--ink);border-color:var(--mut)}
-:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-.grid{display:grid;grid-template-columns:260px 1fr;gap:32px}
-@media(max-width:780px){.grid{grid-template-columns:1fr;gap:24px}}
-aside h2,.sec{font:600 13px/1 system-ui;color:var(--mut);margin:0 0 12px}
-.doc{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
-.doc b{font-weight:500;display:block}.doc span{color:var(--mut);font-size:12.5px}
-.doc button{background:none;border:0;color:var(--mut);cursor:pointer;font-size:18px;line-height:1;padding:0 4px}
-.doc button:hover{color:var(--ink)}
-details{margin-top:16px}summary{cursor:pointer;color:var(--acc);font-size:14px}
-details input,details textarea{width:100%;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surf)}
-details textarea{height:110px;resize:vertical}
-.btn{margin-top:8px;background:var(--acc);color:var(--surf);border:0;border-radius:8px;padding:7px 14px;cursor:pointer;font-weight:500}
-.ask{display:flex;gap:10px}
-.ask input{flex:1;padding:13px 16px;font-size:16px;border:1px solid var(--line);border-radius:12px;background:var(--surf)}
-.ask .btn{margin:0;padding:0 22px;border-radius:12px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
-.chip{background:none;border:1px solid var(--line);border-radius:99px;padding:4px 12px;color:var(--mut);font-size:13.5px;cursor:pointer}
-.chip:hover{color:var(--acc);border-color:var(--acc)}
-.knobs{display:flex;flex-wrap:wrap;gap:20px;margin:20px 0 0;color:var(--mut);font-size:13px;align-items:center}
-.knobs label{display:flex;align-items:center;gap:8px}.knobs input{accent-color:var(--acc)}
-.stat{margin-left:auto}
-.answer{margin-top:28px;padding:22px 24px;background:var(--surf);border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:12px;font:17px/1.7 Georgia,"Times New Roman",serif;max-width:68ch;animation:in .25s ease}
-.answer sup{font:600 11px system-ui;color:var(--acc);margin-left:2px}
-.empty{color:var(--mut);margin-top:28px}
-.pass{margin-top:14px;padding:14px 0 0;border-top:1px solid var(--line)}
-.pass header{margin:0 0 6px;align-items:center}
-.pass .t{font-weight:500}.pass .t i{font-style:normal;color:var(--acc);margin-right:8px}
-.bar{width:90px;height:4px;background:var(--line);border-radius:4px;overflow:hidden}.bar div{height:100%;background:var(--acc)}
-.pass p{margin:0;color:var(--mut);max-width:72ch}
+body{margin:0;color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(900px 420px at 85% -10%,var(--glow),transparent),radial-gradient(700px 380px at -5% 0,rgba(20,184,166,.08),transparent),var(--bg);min-height:100vh}
+.wrap{max-width:1120px;margin:0 auto;padding:24px 20px 64px}
+button,input,textarea{font:inherit;color:inherit}:focus-visible{outline:2px solid var(--a1);outline-offset:2px}
+.top{display:flex;align-items:center;gap:18px;margin-bottom:20px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font:600 24px Georgia,"Times New Roman",serif}
+.logo i{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--a1),var(--a2));display:grid;place-items:center;color:#fff;font:600 16px Georgia,serif;font-style:normal}
+.tabs{display:flex;gap:4px;margin-left:12px;background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:3px}
+.tab{background:none;border:0;border-radius:8px;padding:6px 16px;color:var(--mut);cursor:pointer}
+.tab[aria-selected=true]{background:var(--ink);color:var(--surf)}
+.ghost{margin-left:auto;background:var(--surf);border:1px solid var(--line);border-radius:10px;padding:6px 14px;color:var(--mut);cursor:pointer}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;box-shadow:var(--sh)}
+.pipe{display:flex;padding:16px 22px;margin-bottom:22px;gap:0;overflow-x:auto}
+.st{flex:1;min-width:120px;position:relative;padding-top:20px;color:var(--mut);transition:color .3s}
+.st::before{content:"";position:absolute;top:5px;left:0;width:10px;height:10px;border-radius:50%;background:var(--line);transition:background .3s,box-shadow .3s}
+.st::after{content:"";position:absolute;top:9px;left:16px;right:8px;height:2px;background:var(--line)}
+.st:last-child::after{display:none}
+.st.on{color:var(--ink)}.st.on::before{background:var(--a2);box-shadow:0 0 0 4px rgba(20,184,166,.18)}
+.st b{display:block;font-weight:600;font-size:14px}.st span{font-size:12.5px}
+.grid{display:grid;grid-template-columns:290px 1fr;gap:24px;align-items:start}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+h2{font:600 13px/1 system-ui;color:var(--mut);margin:0 0 12px}
+.lib{padding:18px}
+.doc{padding:11px 0;border-bottom:1px solid var(--line)}
+.dh{display:flex;gap:9px;align-items:center}.dh i{width:9px;height:9px;border-radius:3px;flex:none}
+.dh b{font-weight:500;flex:1;font-size:14px}.dh span{color:var(--mut);font-size:12px}
+.dh button{background:none;border:0;color:var(--mut);cursor:pointer;font-size:17px;padding:0 2px}
+.map{display:flex;gap:3px;margin:8px 0 0 18px;flex-wrap:wrap}.map u{width:16px;height:6px;border-radius:2px;background:var(--line);transition:background .3s}
+details{margin-top:14px}summary{cursor:pointer;color:var(--a1);font-size:14px}
+details input,details textarea{width:100%;margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+details textarea{height:100px;resize:vertical}
+.btn{background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;border:0;border-radius:10px;padding:8px 16px;cursor:pointer;font-weight:600;margin-top:8px}
+.ask{display:flex;gap:10px;padding:10px;border-radius:16px}
+.ask input{flex:1;border:0;background:none;padding:8px 10px;font-size:17px;outline:0}
+.ask .btn{margin:0;padding:0 26px;border-radius:11px}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.chip{background:var(--surf);border:1px solid var(--line);border-radius:99px;padding:4px 13px;color:var(--mut);font-size:13.5px;cursor:pointer}
+.chip:hover{color:var(--a1);border-color:var(--a1)}
+.set{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center;padding:12px 18px;margin-top:16px;color:var(--mut);font-size:13px}
+.set label{display:flex;gap:8px;align-items:center}.set input{accent-color:var(--a1)}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{background:none;border:0;padding:4px 12px;color:var(--mut);cursor:pointer;font-size:13px}
+.seg button[aria-pressed=true]{background:var(--a1);color:#fff}
+.ans{margin-top:22px;padding:24px 26px;border-left:4px solid var(--a2);animation:in .3s}
+.ans p{font:18px/1.7 Georgia,"Times New Roman",serif;margin:0;max-width:66ch}
+.ans sup{font:700 11px system-ui;color:var(--a1);cursor:pointer;margin-left:2px}
+.meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:12.5px;color:var(--mut)}
+.pill{border-radius:99px;padding:2px 11px;border:1px solid var(--line)}
+.pill.hi{color:#0F9D8A;border-color:#0F9D8A55}.pill.me{color:#B7791F;border-color:#B7791F55}.pill.lo{color:#D6455D;border-color:#D6455D55}
+.pass{padding:14px 18px;margin-top:12px;transition:box-shadow .3s,border-color .3s}
+.pass.flash{border-color:var(--a1);box-shadow:0 0 0 3px var(--glow)}
+.ph{display:flex;align-items:center;gap:10px;margin-bottom:6px}.ph i{width:9px;height:9px;border-radius:3px}
+.ph b{font-weight:600;font-size:14px;flex:1}.ph em{font-style:normal;color:var(--mut);font-size:12px}
+.bar{width:80px;height:5px;background:var(--line);border-radius:5px;overflow:hidden}.bar div{height:100%;background:linear-gradient(90deg,var(--a1),var(--a2))}
+.pass p{margin:0;color:var(--mut);max-width:74ch}
 mark{background:var(--hl);color:var(--ink);border-radius:3px;padding:0 2px}
-@keyframes in{from{opacity:0}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.answer{animation:none}}
+.empty{color:var(--mut);padding:30px 4px}
+.ev{padding:22px}.ev table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px}
+.ev td,.ev th{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;font-weight:400}.ev th{color:var(--mut);font-size:12.5px}
+.ev .bar{width:100%;min-width:60px}.ev .n{width:46px;color:var(--mut)}
+.ok{color:#0F9D8A}.no{color:#D6455D}
+@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><h1>Recall<small>A knowledge assistant that runs entirely in your browser</small></h1><button class="ghost" id="theme">Theme</button></header>
+<div class="top"><div class="logo"><i>R</i>Recall</div>
+<div class="tabs" role="tablist"><button class="tab" role="tab" aria-selected="true" id="t1">Ask</button><button class="tab" role="tab" aria-selected="false" id="t2">Evaluate</button></div>
+<button class="ghost" id="theme">Theme</button></div>
+<div class="card pipe" id="pipe"></div>
 <div class="grid">
-<aside>
-<h2>Library</h2><div id="docs"></div>
-<details><summary>Add a document</summary>
-<input id="nt" placeholder="Title"><textarea id="nb" placeholder="Paste text, or choose a .txt / .md file"></textarea>
-<input id="nf" type="file" accept=".txt,.md">
-<button class="btn" id="add">Add to library</button></details>
-</aside>
+<aside class="card lib"><h2>Library</h2><div id="docs"></div>
+<details><summary>Add a document</summary><input id="nt" placeholder="Title"><textarea id="nb" placeholder="Paste text, or choose a .txt / .md file"></textarea><input id="nf" type="file" accept=".txt,.md"><button class="btn" id="add">Add to library</button></details></aside>
 <main>
-<form class="ask" id="f"><input id="q" placeholder="Ask about anything in your library" autocomplete="off" aria-label="Question"><button class="btn">Ask</button></form>
-<div class="chips" id="chips"></div>
-<div class="knobs">
-<label>Passage length <input type="range" id="sz" min="30" max="150" value="70" step="10"><span id="szv">70 words</span></label>
-<label>Passages shown <input type="range" id="kk" min="1" max="5" value="3"><span id="kkv">3</span></label>
-<span class="stat" id="stat"></span></div>
-<div id="out"><p class="empty">Answers are assembled from your documents, and every claim points to its source passage.</p></div>
+<div id="p1">
+<form class="card ask" id="f"><input id="q" placeholder="Ask anything about your documents" autocomplete="off" aria-label="Question"><button class="btn">Ask</button></form>
+<div class="row" id="chips"></div>
+<div class="card set">
+<div class="seg" id="mode"><button data-m="bm25" aria-pressed="false">Keyword</button><button data-m="sem" aria-pressed="false">Semantic</button><button data-m="hyb" aria-pressed="true">Hybrid</button></div>
+<label>Passage length <input type="range" id="sz" min="30" max="150" step="10" value="70"><span id="szv">70 words</span></label>
+<label>Show <input type="range" id="kk" min="1" max="5" value="3"><span id="kkv">3</span></label>
+<label><input type="checkbox" id="ov" checked> Overlap</label></div>
+<div id="out"><p class="empty">Answers are assembled from your documents and every claim points to its source passage. Try a suggested question.</p></div>
+</div>
+<div id="p2" hidden><div class="card ev"><h2>Retrieval quality</h2><p style="margin:0;color:var(--mut)">Eight test questions with a known source document. Run it, change passage length or overlap, and run it again to see what helps.</p>
+<button class="btn" id="run">Run evaluation</button><div id="evo"></div></div></div>
 </main></div></div>
 <script>
 const DOCS=[
-{t:"VPN access guide",x:"Remote staff connect through the corporate VPN client. Install the client from the software portal and sign in with your work email. If the connection fails, confirm that the device clock is correct and that Wi-Fi has working internet before retrying. Error 809 usually means a firewall is blocking the tunnel, so switch from the home router to a mobile hotspot to test. If the client still cannot connect, collect the error code and the time of the attempt and escalate to the Network team."},
-{t:"Password and MFA policy",x:"Passwords must be at least twelve characters and are changed every ninety days. After five failed sign-ins an account is locked for thirty minutes. Users can unlock their account through the self-service portal after verifying with MFA. If the MFA prompt does not arrive, check that phone notifications are enabled and that the device has signal, then request a new prompt. A lost phone must be reported to the Identity team immediately so that its token can be revoked."},
-{t:"Printer troubleshooting",x:"When a printer shows as offline, first check that it is powered on and connected to the network. Restart the print spooler service on the workstation and clear any stuck jobs from the queue. If the problem continues, remove the printer and add it again using the current driver from the print server. Print a test page to confirm. Hardware faults such as paper jams or toner errors are logged with the facilities team along with the printer asset tag."},
-{t:"New laptop setup",x:"New laptops are imaged by IT before delivery. On first start, connect to the office network and sign in with your work account so that device policies can apply. Disk encryption is enabled automatically and the recovery key is stored in the directory. Install approved applications from the software portal rather than downloading them. Setup typically takes about forty minutes, and users should keep the device plugged in until it finishes."},
-{t:"Incident escalation matrix",x:"Level one support resolves common issues using runbooks and records every step taken. Escalate when the user is blocked and the runbook is exhausted, when a security concern is suspected, or when several users report the same fault. Include the ticket number, symptoms, checks performed and screenshots in the handover. Security concerns such as phishing or malware go to the Security team at once. Outages affecting many users are raised as a major incident."}];
-const STOP=new Set("a an the and or of to in on for with is are was be it its this that as at by from how do does i my we can what when why which if then so not no or you your should will".split(" "));
+{t:"VPN access guide",c:0,x:"Remote staff connect through the corporate VPN client. Install the client from the software portal and sign in with your work email. If the connection fails, confirm that the device clock is correct and that Wi-Fi has working internet before retrying. Error 809 usually means a firewall is blocking the tunnel, so switch from the home router to a mobile hotspot to test. If the client still cannot connect, collect the error code and the time of the attempt and escalate to the Network team."},
+{t:"Password and MFA policy",c:1,x:"Passwords must be at least twelve characters and are changed every ninety days. After five failed sign-ins an account is locked for thirty minutes. Users can unlock their account through the self-service portal after verifying with MFA. If the MFA prompt does not arrive, check that phone notifications are enabled and that the device has signal, then request a new prompt. A lost phone must be reported to the Identity team immediately so that its token can be revoked."},
+{t:"Printer troubleshooting",c:2,x:"When a printer shows as offline, first check that it is powered on and connected to the network. Restart the print spooler service on the workstation and clear any stuck jobs from the queue. If the problem continues, remove the printer and add it again using the current driver from the print server. Print a test page to confirm. Hardware faults such as paper jams or toner errors are logged with the facilities team along with the printer asset tag."},
+{t:"New laptop setup",c:3,x:"New laptops are imaged by IT before delivery. On first start, connect to the office network and sign in with your work account so that device policies can apply. Disk encryption is enabled automatically and the recovery key is stored in the directory. Install approved applications from the software portal rather than downloading them. Setup typically takes about forty minutes, and users should keep the device plugged in until it finishes."},
+{t:"Incident escalation matrix",c:4,x:"Level one support resolves common issues using runbooks and records every step taken. Escalate when the user is blocked and the runbook is exhausted, when a security concern is suspected, or when several users report the same fault. Include the ticket number, symptoms, checks performed and screenshots in the handover. Security concerns such as phishing or malware go to the Security team at once. Outages affecting many users are raised as a major incident."}];
+const COL=["#4361EE","#A855F7","#F59E0B","#14B8A6","#E0577A","#64748B"];
+const EVAL=[["Why does error 809 appear on the VPN?","VPN access guide"],["How do I unlock my locked account?","Password and MFA policy"],["Printer says it is offline","Printer troubleshooting"],["How long does laptop setup take?","New laptop setup"],["Someone clicked a suspicious email link","Incident escalation matrix"],["My phone was lost, what now?","Password and MFA policy"],["Is my new machine encrypted?","New laptop setup"],["Authenticator code never shows up on my device","Password and MFA policy"]];
+const STOP=new Set("a an the and or of to in on for with is are was be it its this that as at by from how do does i my we can what when why which if then so not no you your should will where".split(" "));
 const tok=s=>(s.toLowerCase().match(/[a-z0-9]+/g)||[]).filter(w=>!STOP.has(w)).map(w=>w.length>4?w.replace(/(ing|ed|es|s)$/,""):w);
+const SYN={};[["vpn tunnel remote firewall network"],["password credential passcode locked unlock lockout account"],["mfa token authenticator prompt phone"],["printer print spooler toner offline"],["laptop device setup encryption image"],["escalate handover ticket incident security phishing malware"]].forEach(([g])=>{const t=tok(g);t.forEach(w=>SYN[w]=t)});
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-let docs=DOCS.map((d,i)=>({id:i,...d})),nid=DOCS.length,chunks=[],df={},avg=1;
 const $=id=>document.getElementById(id);
+let docs=DOCS.map((d,i)=>({id:i,...d})),nid=DOCS.length,chunks=[],df={},avg=1,mode="hyb",tBuild=0,hist=[],stats=[];
+const gram=ts=>{const m=new Map;ts.forEach(w=>{const p="_"+w+"_";for(let i=0;i<p.length-2;i++){const g=p.slice(i,i+3);m.set(g,(m.get(g)||0)+1)}});m.n=Math.sqrt([...m.values()].reduce((a,b)=>a+b*b,0))||1;return m};
+const cos=(a,b)=>{let s=0;const[x,y]=a.size<b.size?[a,b]:[b,a];x.forEach((v,k)=>{const o=y.get(k);if(o)s+=v*o});return s/(a.n*b.n)};
 function build(){
- const size=+$("sz").value;chunks=[];df={};
- docs.forEach(d=>{const sents=d.x.match(/[^.!?]+[.!?]*\s*/g)||[d.x];let cur=[],n=0;
-  const push=()=>{if(cur.length){chunks.push({doc:d.t,text:cur.join("").trim()});}cur=[];n=0};
-  sents.forEach(s=>{const w=s.split(/\s+/).length;if(n+w>size&&n)push();cur.push(s);n+=w});push()});
- chunks.forEach(c=>{c.tk=tok(c.text);c.tf={};c.tk.forEach(w=>c.tf[w]=(c.tf[w]||0)+1);Object.keys(c.tf).forEach(w=>df[w]=(df[w]||0)+1)});
- avg=chunks.reduce((a,c)=>a+c.tk.length,0)/(chunks.length||1);
- $("stat").textContent=docs.length+" documents · "+chunks.length+" passages indexed";
-}
-function search(q,k){const qt=[...new Set(tok(q))],N=chunks.length;
- return chunks.map(c=>{let s=0;qt.forEach(w=>{const f=c.tf[w]||0;if(!f)return;const idf=Math.log(1+(N-df[w]+.5)/(df[w]+.5));s+=idf*f*2.2/(f+1.2*(.25+.75*c.tk.length/avg))});return{...c,s}})
- .filter(c=>c.s>0).sort((a,b)=>b.s-a.s).slice(0,k).map(c=>(c.qt=qt,c))}
-function hl(t,qt){const e=esc(t);return qt.length?e.replace(/[A-Za-z0-9]+/g,w=>qt.includes(tok(w)[0])?"<mark>"+w+"</mark>":w):e}
-function ask(q){
- q=q.trim();if(!q)return;$("q").value=q;
- const r=search(q,+$("kk").value);
- if(!r.length){$("out").innerHTML='<p class="empty">Nothing in your library matches that. Try different words, or add a document that covers it.</p>';return}
- const qt=r[0].qt,picks=[];
- r.slice(0,2).forEach((c,i)=>{const ss=(c.text.match(/[^.!?]+[.!?]/g)||[c.text]).map(s=>({s:s.trim(),n:tok(s).filter(w=>qt.includes(w)).length,i}));
-  ss.sort((a,b)=>b.n-a.n);if(ss[0]&&ss[0].n)picks.push(ss[0])});
- if(!picks.length)picks.push({s:r[0].text.split(/(?<=[.!?])\s/)[0],i:0});
- const ans=picks.map(p=>esc(p.s)+"<sup>"+(p.i+1)+"</sup>").join(" ");
- const mx=r[0].s;
- $("out").innerHTML='<div class="answer">'+ans+'</div><h2 class="sec" style="margin-top:32px">Sources</h2>'+
- r.map((c,i)=>'<div class="pass"><header><span class="t"><i>'+(i+1)+'</i>'+esc(c.doc)+'</span><div class="bar" title="Relevance"><div style="width:'+Math.round(c.s/mx*100)+'%"></div></div></header><p>'+hl(c.text,qt)+'</p></div>').join("");
-}
-function renderDocs(){$("docs").innerHTML=docs.map(d=>'<div class="doc"><div><b>'+esc(d.t)+'</b><span>'+d.x.split(/\s+/).length+' words</span></div><button aria-label="Remove '+esc(d.t)+'" data-id="'+d.id+'">×</button></div>').join("")||'<p class="empty" style="margin:0">Your library is empty. Add a document to begin.</p>';
- $("docs").querySelectorAll("button").forEach(b=>b.onclick=()=>{docs=docs.filter(d=>d.id!=b.dataset.id);renderDocs();build();$("out").innerHTML=""})}
+ const t0=performance.now(),size=+$("sz").value,ov=$("ov").checked;chunks=[];df={};
+ docs.forEach(d=>{const ss=d.x.match(/[^.!?]+[.!?]*\s*/g)||[d.x];let cur=[],n=0;
+  const flush=()=>{if(cur.length)chunks.push({d,text:cur.join("").trim()});const last=cur[cur.length-1];cur=ov&&last?[last]:[];n=last&&ov?last.split(/\s+/).length:0};
+  ss.forEach(s=>{const w=s.split(/\s+/).length;if(n+w>size&&cur.length>(ov?1:0))flush();cur.push(s);n+=w});if(cur.length&&(!ov||cur.length>1||!chunks.some(c=>c.d===d)))chunks.push({d,text:cur.join("").trim()})});
+ chunks.forEach((c,i)=>{c.i=i;c.tk=tok(c.text);c.tf={};c.tk.forEach(w=>c.tf[w]=(c.tf[w]||0)+1);Object.keys(c.tf).forEach(w=>df[w]=(df[w]||0)+1);c.v=gram(c.tk)});
+ avg=chunks.reduce((a,c)=>a+c.tk.length,0)/(chunks.length||1);tBuild=performance.now()-t0;
+ stats=[docs.length+" documents",chunks.length+" passages",Object.keys(df).length+" terms"];pipe([...stats,"",""],0);renderDocs()}
+const bm=(c,qt)=>{let s=0;const N=chunks.length;qt.forEach(w=>{const f=c.tf[w]||0;if(f)s+=Math.log(1+(N-df[w]+.5)/(df[w]+.5))*f*2.2/(f+1.2*(.25+.75*c.tk.length/avg))});return s};
+function ranked(q,m){const qt=[...new Set(tok(q))],ex=[...new Set(qt.flatMap(w=>SYN[w]||[w]))],qv=gram(ex);
+ const b=chunks.map(c=>({c,s:bm(c,qt)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+ const s=chunks.map(c=>({c,s:cos(qv,c.v)})).filter(x=>x.s>.08).sort((a,b)=>b.s-a.s);
+ if(m==="bm25")return{r:b,qt};if(m==="sem")return{r:s,qt};
+ const sc=new Map;[b,s].forEach(l=>l.slice(0,20).forEach((x,i)=>sc.set(x.c,(sc.get(x.c)||0)+1/(60+i))));
+ return{r:[...sc].map(([c,s])=>({c,s})).sort((a,b)=>b.s-a.s),qt}}
+function pipe(v,n){$("pipe").innerHTML=["Ingest","Chunk","Index","Retrieve","Answer"].map((s,i)=>'<div class="st'+(i<=n||v[i]?' on':'')+'"><b>'+s+'</b><span>'+(v[i]||"&nbsp;")+'</span></div>').join("")}
+function ask(q){q=q.trim();if(!q)return;$("q").value=q;
+ const t0=performance.now(),{r,qt}=ranked(q,mode),k=+$("kk").value,top=r.slice(0,k),ms=performance.now()-t0;
+ paint(top);
+ if(!top.length){$("out").innerHTML='<p class="empty">Nothing in your library matches that. Try different words, or add a document that covers it.</p>';return}
+ const t1=performance.now(),picks=[];
+ top.forEach((x,i)=>{if(picks.length>=2)return;const ss=(x.c.text.match(/[^.!?]+[.!?]/g)||[x.c.text]).map(s=>({s:s.trim(),n:tok(s).filter(w=>qt.includes(w)).length,i})).sort((a,b)=>b.n-a.n);const z=ss.find(y=>y.n&&!picks.some(p=>p.s===y.s));if(z)picks.push(z)});
+ const cov=qt.length?qt.filter(w=>top[0].c.tf[w]).length/qt.length:0,lv=cov>=.66?["hi","High"]:cov>=.34?["me","Medium"]:["lo","Low"];
+ if(!picks.length)picks.push({s:top[0].c.text.split(/(?<=[.!?])\s/)[0],i:0});
+ const ans=(lv[0]==="lo"?"I’m not certain, but the closest passage says: ":"")+picks.map(p=>esc(p.s)+'<sup data-n="'+p.i+'">'+(p.i+1)+"</sup>").join(" "),mx=top[0].s;
+ pipe([...stats,"retrieved in "+ms.toFixed(1)+" ms","answered in "+(performance.now()-t1).toFixed(1)+" ms"],4);
+ $("out").innerHTML='<div class="card ans"><div class="meta"><span class="pill '+lv[0]+'">'+lv[1]+' confidence</span><span class="pill">'+{bm25:"Keyword",sem:"Semantic",hyb:"Hybrid"}[mode]+'</span><span>'+top.length+' of '+r.length+' passages</span></div><p>'+ans+'</p></div>'+
+ top.map((x,i)=>'<div class="card pass" id="ps'+i+'"><div class="ph"><i style="background:'+COL[x.c.d.c%6]+'"></i><b>'+(i+1)+'. '+esc(x.c.d.t)+'</b><em>match '+Math.round(x.s/mx*100)+'%</em><div class="bar"><div style="width:'+Math.round(x.s/mx*100)+'%"></div></div></div><p>'+hl(x.c.text,qt)+'</p></div>').join("");
+ $("out").querySelectorAll("sup").forEach(s=>s.onclick=()=>{const e=$("ps"+s.dataset.n);e.scrollIntoView({behavior:"smooth",block:"center"});e.classList.add("flash");setTimeout(()=>e.classList.remove("flash"),1400)});
+ if(!hist.includes(q)){hist.unshift(q);hist=hist.slice(0,4);chips()}}
+const hl=(t,qt)=>esc(t).replace(/[A-Za-z0-9]+/g,w=>qt.includes(tok(w)[0])?"<mark>"+w+"</mark>":w);
+function paint(top){const m=new Map(top.map(x=>[x.c.i,x.s/top[0].s]));document.querySelectorAll(".map u").forEach(u=>{const v=m.get(+u.dataset.i);u.style.background=v?COL[u.dataset.c%6]:"";u.style.opacity=v?.35+.65*v:1})}
+function renderDocs(){$("docs").innerHTML=docs.map(d=>'<div class="doc"><div class="dh"><i style="background:'+COL[d.c%6]+'"></i><b>'+esc(d.t)+'</b><span>'+d.x.split(/\s+/).length+'w</span><button aria-label="Remove '+esc(d.t)+'" data-id="'+d.id+'">×</button></div><div class="map">'+chunks.filter(c=>c.d===d).map(c=>'<u data-i="'+c.i+'" data-c="'+d.c+'"></u>').join("")+'</div></div>').join("")||'<p class="empty" style="padding:8px 0">Your library is empty. Add a document to begin.</p>';
+ $("docs").querySelectorAll("button").forEach(b=>b.onclick=()=>{docs=docs.filter(d=>d.id!=b.dataset.id);build();$("out").innerHTML=""})}
+function chips(){$("chips").innerHTML=(hist.length?hist:["Error 809 on VPN","MFA prompt not arriving","When do I escalate?"]).map(s=>'<button type="button" class="chip">'+esc(s)+'</button>').join("");$("chips").querySelectorAll("button").forEach(b=>b.onclick=()=>ask(b.textContent))}
+function evaluate(){const have=new Set(docs.map(d=>d.t)),qs=EVAL.filter(e=>have.has(e[1]));if(!qs.length){$("evo").innerHTML='<p class="empty">Add the sample documents back to run the test set.</p>';return}
+ const res=["bm25","sem","hyb"].map(m=>{const ranks=qs.map(([q,d])=>{const r=ranked(q,m).r;const seen=[];r.forEach(x=>{if(!seen.includes(x.c.d.t))seen.push(x.c.d.t)});return seen.indexOf(d)});
+  return{m,ranks,h1:ranks.filter(r=>r===0).length/qs.length,h3:ranks.filter(r=>r>=0&&r<3).length/qs.length,mrr:ranks.reduce((a,r)=>a+(r>=0?1/(r+1):0),0)/qs.length}});
+ const bar=v=>'<div class="bar"><div style="width:'+Math.round(v*100)+'%"></div></div>',nm={bm25:"Keyword",sem:"Semantic",hyb:"Hybrid"};
+ $("evo").innerHTML='<table><tr><th>Mode</th><th>Top-1 hit</th><th></th><th>Top-3 hit</th><th></th><th>MRR</th><th></th></tr>'+res.map(r=>'<tr><td>'+nm[r.m]+'</td><td class="n">'+Math.round(r.h1*100)+'%</td><td>'+bar(r.h1)+'</td><td class="n">'+Math.round(r.h3*100)+'%</td><td>'+bar(r.h3)+'</td><td class="n">'+r.mrr.toFixed(2)+'</td><td>'+bar(r.mrr)+'</td></tr>').join("")+'</table>'+
+ '<h2 style="margin-top:24px">Questions (current mode: '+nm[mode]+')</h2><table>'+qs.map(([q,d],i)=>{const k=res.find(r=>r.m===mode).ranks[i];return'<tr><td>'+esc(q)+'</td><td>'+esc(d)+'</td><td class="'+(k===0?"ok":"no")+'">'+(k===0?"✓ rank 1":k>0?"rank "+(k+1):"✗ missed")+'</td></tr>'}).join("")+'</table>'}
 $("f").onsubmit=e=>{e.preventDefault();ask($("q").value)};
-$("chips").innerHTML=["Error 809 on VPN","MFA prompt not arriving","When do I escalate?"].map(s=>'<button type="button" class="chip">'+s+'</button>').join("");
-$("chips").querySelectorAll("button").forEach(b=>b.onclick=()=>ask(b.textContent));
+$("mode").querySelectorAll("button").forEach(b=>b.onclick=()=>{mode=b.dataset.m;$("mode").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));if($("q").value)ask($("q").value)});
 $("sz").oninput=()=>{$("szv").textContent=$("sz").value+" words";build();if($("q").value)ask($("q").value)};
+$("ov").onchange=()=>{build();if($("q").value)ask($("q").value)};
 $("kk").oninput=()=>{$("kkv").textContent=$("kk").value;if($("q").value)ask($("q").value)};
-$("nf").onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>{$("nb").value=t;if(!$("nt").value)$("nt").value=f.name.replace(/\.\w+$/,"")})};
-$("add").onclick=()=>{const x=$("nb").value.trim();if(!x)return;docs.push({id:nid++,t:$("nt").value.trim()||"Untitled document",x});$("nb").value=$("nt").value="";renderDocs();build()};
-$("theme").onclick=()=>{const r=document.documentElement,d=getComputedStyle(r).colorScheme==="dark";r.dataset.theme=d?"light":"dark"};
-renderDocs();build();
+$("nf").onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>{$("nb").value=t;if(!$("nt").value)$("nt").value=f.name.replace(/\.\w+$/,"")})};
+$("add").onclick=()=>{const x=$("nb").value.trim();if(!x)return;docs.push({id:nid++,c:docs.length%6,t:$("nt").value.trim()||"Untitled document",x});$("nb").value=$("nt").value="";build()};
+$("run").onclick=evaluate;
+[["t1","p1","p2"],["t2","p2","p1"]].forEach(([t,s,h])=>$(t).onclick=()=>{$(s).hidden=false;$(h).hidden=true;$("t1").setAttribute("aria-selected",t==="t1");$("t2").setAttribute("aria-selected",t==="t2")});
+$("theme").onclick=()=>{const r=document.documentElement;r.dataset.theme=getComputedStyle(r).colorScheme==="dark"?"light":"dark"};
+chips();build();
 </script>
 </body>
 </html>
